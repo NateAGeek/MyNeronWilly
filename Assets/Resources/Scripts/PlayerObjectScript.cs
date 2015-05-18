@@ -15,9 +15,9 @@ public class PlayerObjectScript: MonoBehaviour{
 	private Camera    camera;
 
 	// Movement Vars
-	private Vector2   rotationMin       = new Vector2(-360.0f, -60.0f);
-	private Vector2   rotationMax       = new Vector2(360.0f, 60.0f);
-	private Vector3   rotation          = new Vector3(0.0f, 0.0f, 0.0f);
+	private Vector2   rotationMin       = new Vector2(-360.0f, -25.0f);
+	private Vector2   rotationMax       = new Vector2(360.0f, 0.0f);
+	private Vector3   rotation          = new Vector3(10.0f, 0.0f, 0.0f);
 	private bool      onGround          = true;
 	private bool      hitSomethingInAir = false;
 	private bool      freeze            = false;
@@ -49,6 +49,22 @@ public class PlayerObjectScript: MonoBehaviour{
 
 				rigidbody.AddForce (velocityChange, ForceMode.VelocityChange);
 			}
+			if(Input.GetButtonDown("Attack")){
+				/*Debug.Log("Attacking");
+				RaycastHit hit;
+				Debug.DrawLine(transform.position, transform.forward, Color.green);
+				if(Physics.Raycast(transform.position, transform.forward, out hit, 0.50f)){
+					if(hit.collider.tag == "Agonist"){
+						AgonistInterface ag = hit.transform.gameObject.GetComponent<AgonistInterface>();
+						ag.KnockBack(transform.forward);
+						ag.Damage(10);
+						Debug.Log("Hit the Agonist");
+					}
+				}*/
+
+				Instantiate(Resources.Load("Prefabs/Lazor"), transform.position, transform.rotation);
+
+			}
 			if (Input.GetButtonDown ("Crouch")) {
 				transform.localScale -= new Vector3 (0.0f, 0.25f, 0.0f);
 			}
@@ -73,6 +89,12 @@ public class PlayerObjectScript: MonoBehaviour{
 	}
 
     void OnCollisionEnter(Collision hit) {
+
+		if (hit.collider.tag == "Agonist") {
+			AgonistInterface ag = hit.gameObject.GetComponent<MDMA>();
+			rigidbody.AddForce(-transform.forward*10000, ForceMode.Acceleration);
+			ag.pauseMovement();
+		}
 
 		//If we hit a wall or something while in the air, should begin to ignore velocity vectors
 		if (!onGround && hit.collider.tag == "Untagged") {
@@ -104,11 +126,18 @@ public class PlayerObjectScript: MonoBehaviour{
 
 	void OnTriggerExit(Collider hit){
 		//Trigger for feet to see if off floor to entity
-		onGround = false;
+		if (hit.tag == "Untagged") {
+			onGround = false;
+		}
 	}
 
 	public void setFreeze(bool f){
 		freeze = f;
+	}
+
+	public void EnableDisplayPrompt(string test){
+
+
 	}
 	
 }
