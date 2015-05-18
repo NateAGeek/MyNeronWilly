@@ -42,7 +42,9 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 
 	public void Damage(int amount){
 		health -= amount;
+		Debug.Log ("Health: "+health);
 		if (health < 0) {
+			navAgent.Stop();
 			Destroy(gameObject);
 		}
 	}

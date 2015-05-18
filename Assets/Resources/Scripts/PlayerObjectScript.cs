@@ -24,6 +24,7 @@ public class PlayerObjectScript: MonoBehaviour{
 	private bool      freeze            = false;
 	private string    selectedAbility   = "";
 	
+	public Dictionary<string, int> NuroCollected = new Dictionary<string, int>(); 
 
 	//Abilities are: SlowBeam, GrapHook, Parkour, StunTrap, IRGlasses
 	public Dictionary<string, PassiveAbility> PassiveAbilities = new Dictionary<string, PassiveAbility>();
@@ -71,6 +72,23 @@ public class PlayerObjectScript: MonoBehaviour{
 				Instantiate(Resources.Load("Prefabs/Lazor"), transform.position, transform.rotation);
 
 			}
+			if(Input.GetButtonDown("Interact")){
+				Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.0f);
+				int i = 0;
+				while(i < hitColliders.Length){
+					if(hitColliders[i].tag == "Neurotransmitter"){
+						string nuroName = hitColliders[i].GetComponent<NeurotransmitterInterface>().getName();
+						if(NuroCollected.ContainsKey(nuroName)){
+							NuroCollected[nuroName] += 1;
+						}else{
+							NuroCollected[nuroName] = 1;
+						}
+						Debug.Log ("Collected(Name):"+nuroName+", Amount:"+NuroCollected[nuroName]);
+						Destroy(hitColliders[i].gameObject);
+					}
+					i++;
+				}
+			}
 			if (Input.GetButtonDown ("Crouch")) {
 				transform.localScale -= new Vector3 (0.0f, 0.25f, 0.0f);
 			}
@@ -85,6 +103,12 @@ public class PlayerObjectScript: MonoBehaviour{
 			}
 			if (onGround && Input.GetButtonDown ("Jump")) {
 				rigidbody.AddForce (transform.up * jumpVelocity, ForceMode.VelocityChange);
+			}
+			if(Input.GetButtonDown("SwapRight")){
+				Debug.Log("SwapRight Abbilities");
+			}
+			if(Input.GetButtonDown("SwapLeft")){
+				Debug.Log("SwapLeft Abbilities");
 			}
 			//(Passive)Abilities
 			/*foreach (PassiveAbility p in PassiveAbilities.Values) {
