@@ -9,6 +9,7 @@ public class PlayerObjectScript: MonoBehaviour{
 	public float      speed             = 5.0f;
 	public float      jumpVelocity      = 5.0f;
 	public GameObject GameHUDCanvas;
+	public GameObject GamePromptHUD;
 
 	//Component Vars
 	private Rigidbody rigidbody;
@@ -21,7 +22,12 @@ public class PlayerObjectScript: MonoBehaviour{
 	private bool      onGround          = true;
 	private bool      hitSomethingInAir = false;
 	private bool      freeze            = false;
+	private string    selectedAbility   = "";
 	
+
+	//Abilities are: SlowBeam, GrapHook, Parkour, StunTrap, IRGlasses
+	public Dictionary<string, PassiveAbility> PassiveAbilities = new Dictionary<string, PassiveAbility>();
+	public Dictionary<string, Ability>        Abilities		   = new Dictionary<string, Ability>();
 
     void Start() {
 		camera = GetComponentInChildren<Camera>();
@@ -80,6 +86,11 @@ public class PlayerObjectScript: MonoBehaviour{
 			if (onGround && Input.GetButtonDown ("Jump")) {
 				rigidbody.AddForce (transform.up * jumpVelocity, ForceMode.VelocityChange);
 			}
+			//(Passive)Abilities
+			/*foreach (PassiveAbility p in PassiveAbilities.Values) {
+				p.Activate ();
+			}
+			Abilities [selectedAbility].Activate ();*/
 		}
 		
 	}
@@ -92,7 +103,7 @@ public class PlayerObjectScript: MonoBehaviour{
 
 		if (hit.collider.tag == "Agonist") {
 			AgonistInterface ag = hit.gameObject.GetComponent<MDMA>();
-			rigidbody.AddForce(-transform.forward*10000, ForceMode.Acceleration);
+			rigidbody.AddForce(-transform.forward*10, ForceMode.VelocityChange);
 			ag.pauseMovement();
 		}
 
@@ -135,9 +146,14 @@ public class PlayerObjectScript: MonoBehaviour{
 		freeze = f;
 	}
 
-	public void EnableDisplayPrompt(string test){
-
+	public void EnableDisplayPrompt(string text){
+		GamePromptHUD.GetComponent<PromptBubble> ().setText(text);
+		GamePromptHUD.SetActive(true);
 
 	}
-	
+
+	public void DisableDisplayPrompt(){
+		GamePromptHUD.SetActive(false);
+	}
+
 }

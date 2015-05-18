@@ -15,13 +15,14 @@ public class Dopamine : MonoBehaviour, NeurotransmitterInterface {
 
 	void OnTriggerEnter(Collider hit){
 		if (hit.tag == "Player") {
-			PlayerObjectScript player = hit.gameObject.GetComponent<PlayerObjectScript>();
+			hit.gameObject.GetComponent<PlayerObjectScript>().EnableDisplayPrompt("Pick Up Dopamine by pressing \"A\".");
+
 		}
 	}
 
 	void OnTriggerExit(Collider hit){
 		if (hit.tag == "Player") {
-			PlayerObjectScript player = hit.gameObject.GetComponent<PlayerObjectScript>();
+			hit.gameObject.GetComponent<PlayerObjectScript>().DisableDisplayPrompt();
 		}
 	}
 }
