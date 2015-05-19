@@ -95,7 +95,7 @@ public class PlayerObjectScript: MonoBehaviour{
 			if (Input.GetButtonUp ("Sprint")) {
 				this.speed = 5f;
 			}
-			if (onGround && Input.GetButtonDown ("Jump")) {
+			if (Input.GetButtonDown ("Jump")) {
 				rigidbody.AddForce (transform.up * jumpVelocity, ForceMode.VelocityChange);
 			}
 			if(Input.GetButtonDown("SwapRight")){
