@@ -3,6 +3,13 @@ using System.Collections;
 
 public class MDMA : MonoBehaviour, AgonistInterface {
 
+	/*
+	 * 
+	 * Issues: Still have to make it when it is dead the det dec depletion time 
+	 * 
+	 * 
+	 */
+
 	private NavMeshAgent navAgent;
 	private bool 		 frozen          	 = false;
 	private bool 		 stunAfterAttack 	 = false;
@@ -42,7 +49,6 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 
 	public void Damage(int amount){
 		health -= amount;
-		Debug.Log ("Health: "+health);
 		if (health < 0) {
 			navAgent.Stop();
 			Destroy(gameObject);
@@ -68,4 +74,9 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 	void OnTriggerExit(Collider hit){
 		navAgent.destination = ToBlock.transform.position;
 	}
+
+	void OnDestroy(){
+
+	}
+
 }

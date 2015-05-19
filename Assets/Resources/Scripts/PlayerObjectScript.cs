@@ -22,7 +22,7 @@ public class PlayerObjectScript: MonoBehaviour{
 	private bool      onGround          = true;
 	private bool      hitSomethingInAir = false;
 	private bool      freeze            = false;
-	private string    selectedAbility   = "";
+	private string    selectedAbility   = "Lazor";
 	
 	public Dictionary<string, int> NuroCollected = new Dictionary<string, int>(); 
 
@@ -33,6 +33,9 @@ public class PlayerObjectScript: MonoBehaviour{
     void Start() {
 		camera = GetComponentInChildren<Camera>();
 		rigidbody = GetComponent<Rigidbody>();
+
+		Abilities["Lazor"] = new Lazors(gameObject);
+
     }
 
     void Update() {
@@ -56,22 +59,6 @@ public class PlayerObjectScript: MonoBehaviour{
 
 				rigidbody.AddForce (velocityChange, ForceMode.VelocityChange);
 			}
-			if(Input.GetButtonDown("Attack")){
-				/*Debug.Log("Attacking");
-				RaycastHit hit;
-				Debug.DrawLine(transform.position, transform.forward, Color.green);
-				if(Physics.Raycast(transform.position, transform.forward, out hit, 0.50f)){
-					if(hit.collider.tag == "Agonist"){
-						AgonistInterface ag = hit.transform.gameObject.GetComponent<AgonistInterface>();
-						ag.KnockBack(transform.forward);
-						ag.Damage(10);
-						Debug.Log("Hit the Agonist");
-					}
-				}*/
-
-				Instantiate(Resources.Load("Prefabs/Lazor"), transform.position, transform.rotation);
-
-			}
 			if(Input.GetButtonDown("Interact")){
 				Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1.0f);
 				int i = 0;
@@ -85,6 +72,13 @@ public class PlayerObjectScript: MonoBehaviour{
 						}
 						Debug.Log ("Collected(Name):"+nuroName+", Amount:"+NuroCollected[nuroName]);
 						Destroy(hitColliders[i].gameObject);
+					}
+					if(hitColliders[i].tag == "Dendrite"){
+						Dendrite den = hitColliders[i].GetComponent<Dendrite>();
+						if(NuroCollected.ContainsKey(den.getType()) && NuroCollected[den.getType()] > 0){
+							NuroCollected[den.getType()] -= 1;
+							den.Charge(1);
+						}
 					}
 					i++;
 				}
@@ -113,8 +107,8 @@ public class PlayerObjectScript: MonoBehaviour{
 			//(Passive)Abilities
 			/*foreach (PassiveAbility p in PassiveAbilities.Values) {
 				p.Activate ();
-			}
-			Abilities [selectedAbility].Activate ();*/
+			}*/
+			Abilities[selectedAbility].Activate ();
 		}
 		
 	}
@@ -126,7 +120,7 @@ public class PlayerObjectScript: MonoBehaviour{
     void OnCollisionEnter(Collision hit) {
 
 		if (hit.collider.tag == "Agonist") {
-			AgonistInterface ag = hit.gameObject.GetComponent<MDMA>();
+			AgonistInterface ag = hit.gameObject.GetComponent<AgonistInterface>();
 			rigidbody.AddForce(-transform.forward*10, ForceMode.VelocityChange);
 			ag.pauseMovement();
 		}
@@ -135,6 +129,7 @@ public class PlayerObjectScript: MonoBehaviour{
 		if (!onGround && hit.collider.tag == "Untagged") {
 			hitSomethingInAir = true;
 		}
+		Abilities[selectedAbility].OnCollisionEnter(hit);
     }
 
 	void OnCollisionStay(Collision hit){
@@ -146,16 +141,19 @@ public class PlayerObjectScript: MonoBehaviour{
 			//But if not and we are staying on a wall, we should ignore velocity vectors
 			hitSomethingInAir = true;
 		}
+
 	}
 
 	void OnCollisionExit(Collision hit) {
 		//If we exit a collision we should just assume that we have not hit a wall or anything
 		hitSomethingInAir = false;
+		Abilities[selectedAbility].OnCollisionExit(hit);
 	}
 
 	void OnTriggerEnter(Collider hit){
 		//Trigger for feet to see if on floor to entity
 		onGround = true;
+		Abilities[selectedAbility].OnTriggerEnter(hit);
 
 	}
 
@@ -164,6 +162,7 @@ public class PlayerObjectScript: MonoBehaviour{
 		if (hit.tag == "Untagged") {
 			onGround = false;
 		}
+		Abilities[selectedAbility].OnTriggerExit(hit);
 	}
 
 	public void setFreeze(bool f){

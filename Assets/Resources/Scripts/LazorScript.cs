@@ -24,7 +24,7 @@ public class LazorScript : MonoBehaviour {
 	void OnTriggerEnter(Collider hit){
 		if (hit.tag == "Agonist") {
 			AgonistInterface ag = hit.gameObject.GetComponent<AgonistInterface>();
-			ag.Damage(10);
+			ag.Damage(1);
 		}
 	}
 }

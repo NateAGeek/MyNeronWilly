@@ -20,7 +20,6 @@ public class Dopamine : MonoBehaviour, NeurotransmitterInterface {
 	void OnTriggerEnter(Collider hit){
 		if (hit.tag == "Player") {
 			playerRef.EnableDisplayPrompt("Pick Up Dopamine by pressing \"A\".");
-
 		}
 	}
 
