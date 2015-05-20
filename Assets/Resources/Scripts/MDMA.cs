@@ -67,12 +67,15 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 
 	void OnTriggerStay(Collider hit){
 		if (hit.tag == "Player") {
+			transform.rotation = Quaternion.LookRotation(new Vector3(transform.position.x, transform.position.y, transform.position.z));
 			navAgent.destination = hit.transform.position;
 		}	
 	}
 
 	void OnTriggerExit(Collider hit){
-		navAgent.destination = ToBlock.transform.position;
+		if (hit.tag == "Player") {
+			navAgent.destination = ToBlock.transform.position;
+		}
 	}
 
 	void OnDestroy(){
