@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Dopamine : MonoBehaviour, NeurotransmitterInterface {
 
-	private string name = "Dopamine";
+	public string name = "Dopamine";
 
 	private PlayerObjectScript playerRef;
 

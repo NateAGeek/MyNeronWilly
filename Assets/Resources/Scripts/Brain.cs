@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Brain : MonoBehaviour {
 
-	public float health = 100.0f;
+	public int health = 100;
 
-	public float    depletionTime = 0.0f;
+	public float    depletionTime = 10.0f;
 	public float    depletionTimer;
+	public Text     brainTextDisplay;
 
 	// Use this for initialization
 	void Start () {
@@ -15,11 +17,11 @@ public class Brain : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (depletionTime > 0.0f) {
-			Debug.Log ("Brain is Dep Time"+depletionTime);
+		if (depletionTime < 10.0f) {
 			if (depletionTimer >= depletionTime) {
 				Debug.Log ("Damage to the brain! Health: "+health);
-				Damage(1.0f);
+				Damage(1);
+				brainTextDisplay.text = "Brain Health: "+health;
 				depletionTimer = 0.0f;
 			}
 			depletionTimer += Time.deltaTime;
@@ -27,14 +29,16 @@ public class Brain : MonoBehaviour {
 	}
 
 	public void incDepletionTime(float a){
-		depletionTime -= a;
+		if (depletionTime > 2.0) {
+			depletionTime -= a;
+		}
 	}
 	
 	public void decDepletionTime(float a){
 		depletionTime += a;
 	}
 
-	public void Damage(float i){
+	public void Damage(int i){
 		health -= i;
 	}
 }

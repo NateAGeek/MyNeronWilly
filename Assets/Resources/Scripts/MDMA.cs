@@ -15,6 +15,7 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 	private bool 		 stunAfterAttack 	 = false;
 	private float        stunAfterAttackTime = 0.0f;
 	private int 		 health              = 100;
+	public TextMesh      stats;
 
 
 	private Rigidbody    rigidbody;
@@ -49,6 +50,7 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 
 	public void Damage(int amount){
 		health -= amount;
+		stats.text = "Health: " + health;
 		if (health < 0) {
 			navAgent.Stop();
 			Destroy(gameObject);
@@ -67,7 +69,6 @@ public class MDMA : MonoBehaviour, AgonistInterface {
 
 	void OnTriggerStay(Collider hit){
 		if (hit.tag == "Player") {
-			transform.rotation = Quaternion.LookRotation(new Vector3(transform.position.x, transform.position.y, transform.position.z));
 			navAgent.destination = hit.transform.position;
 		}	
 	}

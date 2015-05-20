@@ -17,14 +17,15 @@ public class LazorScript : MonoBehaviour {
 	void Update () {
 		aliveTime += Time.deltaTime;
 		if (aliveTime >= lifeTime) {
-			Destroy(gameObject);		
+			Destroy(gameObject);	
 		}
 	}
 	
 	void OnTriggerEnter(Collider hit){
 		if (hit.tag == "Agonist") {
 			AgonistInterface ag = hit.gameObject.GetComponent<AgonistInterface>();
-			ag.Damage(1);
+			ag.Damage(5);
+			Destroy (gameObject);
 		}
 	}
 }

@@ -21,7 +21,7 @@ public class Dendrite : MonoBehaviour {
 
 	//Private vars
 	private Camera ActiveCamera;
-	private int    charge = 0;
+	private int    charge = 10;
 	private bool   WarnedBrain = false;
 
 	private Brain  TheBrainComp;
@@ -43,11 +43,11 @@ public class Dendrite : MonoBehaviour {
 
 	void FixedUpdate(){
 		if (charge < 0 && !WarnedBrain) {
-			TheBrainComp.decDepletionTime(25.0f);
+			TheBrainComp.incDepletionTime(1.0f);
 			WarnedBrain = true;
 		}
-		if (charge > 0) {
-			TheBrainComp.incDepletionTime(25.0f);
+		if (charge > 0 && WarnedBrain) {
+			TheBrainComp.decDepletionTime(1.0f);
 			WarnedBrain = false;
 		}
 		
@@ -72,6 +72,9 @@ public class Dendrite : MonoBehaviour {
 	public void Deplete(int d){
 		charge -= d;
 		text.text = type + ": " + charge;
+		if (charge < 0) {
+			TheBrainComp.incDepletionTime(1.0f);
+		}
 	}
 
 	//To charge the dendrite, feeding so it does not die out...
@@ -79,6 +82,10 @@ public class Dendrite : MonoBehaviour {
 		charge += c;
 		text.text = type + ": " + charge;
 		Debug.Log("Charging type("+type+") value:"+charge);
+		if (charge < 0 && WarnedBrain) {
+			TheBrainComp.Damage(1);
+			TheBrainComp.decDepletionTime(1.0f);
+		}
 	}
 
 	public void incDepletionTime(float a){

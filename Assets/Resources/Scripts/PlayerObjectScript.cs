@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,8 +9,11 @@ public class PlayerObjectScript: MonoBehaviour{
 	public Vector2    sensitivity       = new Vector2(10.0f, 10.0f);
 	public float      speed             = 5.0f;
 	public float      jumpVelocity      = 5.0f;
+	public int        health            = 100;
 	public GameObject GameHUDCanvas;
 	public GameObject GamePromptHUD;
+	public Text       HealthText;
+	public Text       StatsText;
 
 	//Component Vars
 	private Rigidbody rigidbody;
@@ -71,6 +75,7 @@ public class PlayerObjectScript: MonoBehaviour{
 							NuroCollected[nuroName] = 1;
 						}
 						Debug.Log ("Collected(Name):"+nuroName+", Amount:"+NuroCollected[nuroName]);
+						updateItemsDisplay();
 						Destroy(hitColliders[i].gameObject);
 					}
 					if(hitColliders[i].tag == "Dendrite"){
@@ -78,6 +83,7 @@ public class PlayerObjectScript: MonoBehaviour{
 						if(NuroCollected.ContainsKey(den.getType()) && NuroCollected[den.getType()] > 0){
 							NuroCollected[den.getType()] -= 1;
 							den.Charge(1);
+							updateItemsDisplay();
 						}
 					}
 					i++;
@@ -114,7 +120,7 @@ public class PlayerObjectScript: MonoBehaviour{
 	}
 	
 	void FixedUpdate() {
-		
+
 	}
 
     void OnCollisionEnter(Collision hit) {
@@ -123,6 +129,8 @@ public class PlayerObjectScript: MonoBehaviour{
 			AgonistInterface ag = hit.gameObject.GetComponent<AgonistInterface>();
 			rigidbody.AddForce(-transform.forward*10, ForceMode.VelocityChange);
 			ag.pauseMovement();
+			health -= 1;
+			HealthText.text = "Player Health: "+health;
 		}
 
 		//If we hit a wall or something while in the air, should begin to ignore velocity vectors
@@ -163,6 +171,14 @@ public class PlayerObjectScript: MonoBehaviour{
 			onGround = false;
 		}
 		Abilities[selectedAbility].OnTriggerExit(hit);
+	}
+
+	public void updateItemsDisplay(){
+		string updatedText = "";
+		foreach (KeyValuePair<string, int> nuro in NuroCollected) {
+			updatedText += nuro.Key+": "+nuro.Value+" \n";
+		}
+		StatsText.text = updatedText;
 	}
 
 	public void setFreeze(bool f){
